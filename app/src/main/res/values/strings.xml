@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">EVA-02-IgnacioQuiero</string>
+
+    <!-- TEXTOS PARA LOGIN -->
+    <string name="login_title">Iniciar Sesión</string>
+    <string name="email_hint">Correo electrónico</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button">Ingresar</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="register_link">¿No tienes cuenta? Regístrate</string>
+
+    <!-- TEXTOS PARA REGISTRO -->
+    <string name="register_title">Registrar Cuenta</string>
+    <string name="name_hint">Nombre completo</string>
+    <string name="confirm_password_hint">Confirmar contraseña</string>
+    <string name="register_button">Registrarse</string>
+    <string name="back_to_login">Volver al inicio</string>
+
+    <!-- TEXTOS PARA RECUPERAR CONTRASEÑA -->
+    <string name="recover_title">Recuperar Contraseña</string>
+    <string name="recover_instruction">Ingresa tu correo para recuperar tu contraseña</string>
+    <string name="send_button">Enviar</string>
+</resources>

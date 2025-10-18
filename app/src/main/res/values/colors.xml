@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Color principal de la app -->
+    <color name="primary">#00AEEF</color>
+
+    <!-- Color principal oscuro -->
+    <color name="primary_dark">#007BA7</color>
+
+    <!-- Color de acento -->
+    <color name="accent">#E41E26</color>
+
+    <!-- Blanco y Negro-->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Fondo secundario -->
+    <color name="gray_light">#E0E0E0</color>
+
+    <!-- Textos  -->
+    <color name="text_dark">#212121</color>
+    <color name="text_light">#BDBDBD</color>
+
+    <!-- Detalles  -->
+    <color name="metal_silver">#C0C0C0</color>
+</resources>
