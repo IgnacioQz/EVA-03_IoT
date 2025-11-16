@@ -55,6 +55,17 @@
             android:name=".MainActivity"
             android:exported="false" />
 
+        <!-- Pantalla de agregar noticia -->
+        <activity
+            android:name=".AgregarNoticiaActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Pantalla de detalle de noticia -->
+        <activity
+            android:name=".DetalleNoticiaActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

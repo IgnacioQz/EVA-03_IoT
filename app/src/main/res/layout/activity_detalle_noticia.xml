@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header simple con iconos -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:background="@color/white">
+
+            <!-- Botón Volver (flecha izquierda) -->
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_revert"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:contentDescription="Volver" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Icono de usuario -->
+            <ImageView
+                android:id="@+id/userButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="4dp"
+                android:contentDescription="Usuario" />
+
+        </LinearLayout>
+
+        <!-- Contenedor principal con padding -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Título grande -->
+            <TextView
+                android:id="@+id/tituloTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Debate presidencial"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Bajada (resumen) -->
+            <TextView
+                android:id="@+id/bajadaTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="¿Quién ganó? Expertos analizan qué candidato tuvo el mejor desempeño en el penúltimo 'cara a cara' presidencial"
+                android:textSize="16sp"
+                android:textColor="@color/text_light"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Imagen principal (más grande y destacada) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <ImageView
+                    android:id="@+id/imagenNoticia"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:scaleType="centerCrop"
+                    android:background="@color/gray_light"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:contentDescription="Imagen de la noticia" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Cuerpo de la noticia (texto largo) -->
+            <TextView
+                android:id="@+id/cuerpoTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Este martes se desarrolló un nuevo debate presidencial donde los cinco candidatos se vieron las caras por penúltima vez en este formato, antes de los comicios del 23 y 24 de noviembre.\n\nLos candidatos que se presentaron fueron José Antonio Kast, del Partido Republicano en Chile (Kast) y el abogado en la casa central de la Pontificia Universidad Católica.\n\nLa instancia constó de cuatro rondas con preguntas cruzadas y directas entre los candidatos. En el primer y tercer bloque, cada uno de los postulantes debió responder dos preguntas que realizaron sus rivales, donde además se les otorgó dos temas, marcado además en la instancia oficial del debate de ANATEL y Archi TV, donde cada político tuvo un minuto para responder y treinta segundos de réplica en contra y réplica a favor del equipo contrario, y siendo que en algunos momentos de cierre hubo un tiempo de un minuto para poder entregar sus principales propuestas."
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:lineSpacingExtra="6dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Fecha al final -->
+            <TextView
+                android:id="@+id/fechaTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15 Nov 2025"
+                android:textSize="13sp"
+                android:textColor="@color/text_light"
+                android:textStyle="italic"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+        <!-- Espacio al final -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+</ScrollView>

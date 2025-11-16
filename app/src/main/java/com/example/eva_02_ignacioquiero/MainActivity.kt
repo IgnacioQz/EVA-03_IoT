@@ -1,5 +1,6 @@
 package com.example.eva_02_ignacioquiero
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -85,12 +86,16 @@ class MainActivity : AppCompatActivity() {
         // Configurar el adapter
         adapter = NoticiasAdapter(noticiasList) { noticia ->
             // Acción al hacer click en una noticia
-            // Aquí después navegaremos a la pantalla de detalle
-            Toast.makeText(
-                this,
-                "Noticia: ${noticia.titulo}",
-                Toast.LENGTH_SHORT
-            ).show()
+            // Navegar a DetalleNoticiaActivity pasando los datos
+            val intent = Intent(this, DetalleNoticiaActivity::class.java).apply {
+                putExtra("TITULO", noticia.titulo)
+                putExtra("BAJADA", noticia.bajada)
+                putExtra("CUERPO", noticia.cuerpo)
+                putExtra("FECHA", noticia.fecha)
+                putExtra("IMAGEN_URL", noticia.imagenUrl)
+                putExtra("ID", noticia.id) // Por si lo necesitas después
+            }
+            startActivity(intent)
         }
 
         // Configurar el RecyclerView
@@ -100,11 +105,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         addButton.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Agregar nueva noticia (próximamente)",
-                Toast.LENGTH_SHORT
-            ).show()
+            // Navegar a AgregarNoticiaActivity
+            val intent = Intent(this, AgregarNoticiaActivity::class.java)
+            startActivity(intent)
         }
     }
 }
