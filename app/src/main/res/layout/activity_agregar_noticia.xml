@@ -49,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="Guardar"
                 android:textSize="14sp"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/primary"
                 style="@style/Widget.Material3.Button.TextButton" />
 

@@ -7,6 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import coil.load
+import coil.transform.RoundedCornersTransformation
 
 class DetalleNoticiaActivity : AppCompatActivity() {
 
@@ -71,8 +73,18 @@ class DetalleNoticiaActivity : AppCompatActivity() {
         cuerpoTextView.text = cuerpo
         fechaTextView.text = fecha
 
-        // Por ahora dejamos la imagen por defecto
-        // Cuando conectemos Firebase, cargaremos la imagen real desde imagenUrl
+        // Cargar imagen desde URL usando Coil
+        if (imagenUrl.isNotEmpty()) {
+            imagenNoticia.load(imagenUrl) {
+                crossfade(true)
+                placeholder(R.drawable.ic_launcher_foreground) // Mientras carga
+                error(android.R.drawable.ic_menu_gallery) // Si hay error
+                transformations(RoundedCornersTransformation(16f))
+            }
+        } else {
+            // Imagen por defecto si no hay URL
+            imagenNoticia.setImageResource(android.R.drawable.ic_menu_gallery)
+        }
     }
 
     private fun showLogoutDialog() {
@@ -90,7 +102,8 @@ class DetalleNoticiaActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        // TODO: Aquí limpiaremos la sesión de Firebase cuando lo conectemos
+        // Limpiar sesión de Firebase
+        com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
 
         // Mostrar mensaje
         Toast.makeText(this, "Sesión cerrada exitosamente", Toast.LENGTH_SHORT).show()

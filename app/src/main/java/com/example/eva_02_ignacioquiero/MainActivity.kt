@@ -2,9 +2,9 @@ package com.example.eva_02_ignacioquiero
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,12 +21,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var addButton: FloatingActionButton
     private lateinit var userIconImageView: ImageView
-    private lateinit var progressBar: ProgressBar
     private lateinit var emptyTextView: TextView
     private lateinit var adapter: NoticiasAdapter
 
     private val firebaseHelper = FirebaseHelper()
     private var noticiasList = mutableListOf<Noticia>()
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // Recargar noticias cada vez que volvemos a esta pantalla
+        Log.d(TAG, "onResume - Recargando noticias...")
         loadNoticiasFromFirebase()
     }
 
@@ -52,8 +56,20 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.noticiasRecyclerView)
         addButton = findViewById(R.id.addButton)
         userIconImageView = findViewById(R.id.userIconImageView)
-        // progressBar = findViewById(R.id.progressBar) // Lo agregaremos al layout
-        // emptyTextView = findViewById(R.id.emptyTextView) // Lo agregaremos al layout
+
+        // Crear TextView para estado vacío si no existe en el layout
+        emptyTextView = TextView(this).apply {
+            text = "📰 No hay noticias aún\n\nPresiona el botón + para agregar la primera noticia"
+            textSize = 16f
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            setPadding(32, 32, 32, 32)
+            setTextColor(resources.getColor(android.R.color.darker_gray, null))
+            visibility = View.GONE
+        }
+
+        // Agregar el TextView al layout principal si no existe
+        val mainLayout = findViewById<View>(android.R.id.content).parent as? android.view.ViewGroup
+        mainLayout?.addView(emptyTextView)
     }
 
     private fun setupRecyclerView() {
@@ -71,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true) // Optimización
     }
 
     private fun setupListeners() {
@@ -85,6 +102,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadNoticiasFromFirebase() {
+        Log.d(TAG, "Iniciando carga de noticias...")
+
         // Mostrar loading
         setLoading(true)
 
@@ -92,25 +111,45 @@ class MainActivity : AppCompatActivity() {
             onSuccess = { noticias ->
                 setLoading(false)
 
+                Log.d(TAG, "✅ Noticias cargadas exitosamente: ${noticias.size} noticias")
+
                 // Actualizar la lista
                 noticiasList.clear()
                 noticiasList.addAll(noticias)
+
+                // Ordenar por fecha (más recientes primero) manualmente
+                noticiasList.sortByDescending { it.fecha }
+
+                // Notificar al adapter
                 adapter.notifyDataSetChanged()
 
                 // Mostrar mensaje si no hay noticias
                 if (noticias.isEmpty()) {
                     showEmptyState()
+                    Toast.makeText(
+                        this,
+                        "No hay noticias. ¡Agrega la primera!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     hideEmptyState()
+                    Toast.makeText(
+                        this,
+                        "✅ ${noticias.size} noticia(s) cargada(s)",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             onFailure = { errorMessage ->
                 setLoading(false)
+                Log.e(TAG, "❌ Error al cargar noticias: $errorMessage")
+
                 Toast.makeText(
                     this,
                     "Error al cargar noticias: $errorMessage",
                     Toast.LENGTH_LONG
                 ).show()
+
                 showEmptyState()
             }
         )
@@ -118,21 +157,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun setLoading(loading: Boolean) {
         if (loading) {
-            // progressBar?.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
+            emptyTextView.text = "⏳ Cargando noticias..."
+            emptyTextView.visibility = View.VISIBLE
         } else {
-            // progressBar?.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
+            // La visibilidad se maneja en showEmptyState/hideEmptyState
         }
     }
 
     private fun showEmptyState() {
-        // emptyTextView?.visibility = View.VISIBLE
+        emptyTextView.text = "📰 No hay noticias aún\n\nPresiona el botón + para agregar la primera noticia"
+        emptyTextView.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
     }
 
     private fun hideEmptyState() {
-        // emptyTextView?.visibility = View.GONE
+        emptyTextView.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
     }
 

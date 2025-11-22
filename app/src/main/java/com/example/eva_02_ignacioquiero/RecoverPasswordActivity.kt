@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eva_02_ignacioquiero.firebase.FirebaseHelper
 import com.google.android.material.textfield.TextInputEditText
+import kotlin.random.Random
 
 class RecoverPasswordActivity : AppCompatActivity() {
 
@@ -53,26 +54,45 @@ class RecoverPasswordActivity : AppCompatActivity() {
                 showAlert("Error", "Por favor ingresa un correo válido")
             }
             else -> {
-                // Enviar correo de recuperación con Firebase
-                sendPasswordResetEmail(email)
+                // Verificar si el usuario existe y generar nueva contraseña
+                verifyUserAndResetPassword(email)
             }
         }
     }
 
-    private fun sendPasswordResetEmail(email: String) {
+    private fun verifyUserAndResetPassword(email: String) {
         // Mostrar loading
         setLoading(true)
 
-        firebaseHelper.resetPassword(
+        // Verificar si el usuario existe intentando obtener información
+        firebaseHelper.checkUserExists(
             email = email,
-            onSuccess = {
-                setLoading(false)
+            onExists = { exists ->
+                if (exists) {
+                    // Usuario existe - generar nueva contraseña
+                    val newPassword = generateRandomPassword()
 
-                showSuccessDialog(
-                    "Correo Enviado",
-                    "Se ha enviado un enlace de recuperación a:\n\n$email\n\n" +
-                            "Por favor revisa tu bandeja de entrada y sigue las instrucciones."
-                )
+                    // Actualizar la contraseña en Firebase
+                    firebaseHelper.resetPasswordForUser(
+                        email = email,
+                        newPassword = newPassword,
+                        onSuccess = {
+                            setLoading(false)
+                            showPasswordDialog(email, newPassword)
+                        },
+                        onFailure = { errorMessage ->
+                            setLoading(false)
+                            showAlert("Error", errorMessage)
+                        }
+                    )
+                } else {
+                    setLoading(false)
+                    showAlert(
+                        "Error",
+                        "No existe una cuenta registrada con el correo:\n\n$email\n\n" +
+                                "Por favor verifica el correo o regístrate."
+                    )
+                }
             },
             onFailure = { errorMessage ->
                 setLoading(false)
@@ -81,10 +101,40 @@ class RecoverPasswordActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Genera una contraseña aleatoria de 8 caracteres
+     * Formato: 2 mayúsculas + 4 minúsculas + 2 números
+     */
+    private fun generateRandomPassword(): String {
+        val upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        val lowerCase = "abcdefghijklmnopqrstuvwxyz"
+        val numbers = "0123456789"
+
+        val password = StringBuilder()
+
+        // 2 mayúsculas
+        repeat(2) {
+            password.append(upperCase[Random.nextInt(upperCase.length)])
+        }
+
+        // 4 minúsculas
+        repeat(4) {
+            password.append(lowerCase[Random.nextInt(lowerCase.length)])
+        }
+
+        // 2 números
+        repeat(2) {
+            password.append(numbers[Random.nextInt(numbers.length)])
+        }
+
+        // Mezclar los caracteres para que no sigan un patrón
+        return password.toString().toList().shuffled().joinToString("")
+    }
+
     private fun setLoading(loading: Boolean) {
         if (loading) {
             sendButton.isEnabled = false
-            sendButton.text = "Enviando..."
+            sendButton.text = "Verificando..."
             emailEditText.isEnabled = false
         } else {
             sendButton.isEnabled = true
@@ -93,13 +143,35 @@ class RecoverPasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun showSuccessDialog(title: String, message: String) {
+    private fun showPasswordDialog(email: String, newPassword: String) {
         AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("Aceptar") { dialog, _ ->
+            .setTitle("✅ Contraseña Restablecida")
+            .setMessage(
+                "Se ha generado una nueva contraseña para:\n\n" +
+                        "📧 Correo: $email\n\n" +
+                        "🔐 Nueva contraseña:\n" +
+                        "$newPassword\n\n" +
+                        "⚠️ IMPORTANTE: Guarda esta contraseña en un lugar seguro. " +
+                        "No podrás verla nuevamente."
+            )
+            .setPositiveButton("Copiar y Cerrar") { dialog, _ ->
+                // Copiar al portapapeles
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                val clip = android.content.ClipData.newPlainText("Nueva Contraseña", newPassword)
+                clipboard.setPrimaryClip(clip)
+
+                android.widget.Toast.makeText(
+                    this,
+                    "Contraseña copiada al portapapeles",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+
                 dialog.dismiss()
                 finish() // Volver al login
+            }
+            .setNegativeButton("Cerrar") { dialog, _ ->
+                dialog.dismiss()
+                finish()
             }
             .setCancelable(false)
             .show()
