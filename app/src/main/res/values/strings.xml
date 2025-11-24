@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EVA-02-IgnacioQuiero</string>
+    <string name="app_name">EVA-03-IgnacioQuiero</string>
 
     <!-- TEXTOS PARA LOGIN -->
     <string name="login_title">Iniciar Sesión</string>

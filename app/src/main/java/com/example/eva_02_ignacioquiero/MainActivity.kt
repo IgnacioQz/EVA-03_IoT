@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var addButton: FloatingActionButton
+    private lateinit var addNoticiaCard: com.google.android.material.card.MaterialCardView
     private lateinit var userIconImageView: ImageView
     private lateinit var emptyTextView: TextView
     private lateinit var adapter: NoticiasAdapter
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeViews() {
         recyclerView = findViewById(R.id.noticiasRecyclerView)
-        addButton = findViewById(R.id.addButton)
+        addNoticiaCard = findViewById(R.id.addNoticiaCard)
         userIconImageView = findViewById(R.id.userIconImageView)
 
         // Crear TextView para estado vacío si no existe en el layout
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        addButton.setOnClickListener {
+        addNoticiaCard.setOnClickListener {
             val intent = Intent(this, AgregarNoticiaActivity::class.java)
             startActivity(intent)
         }

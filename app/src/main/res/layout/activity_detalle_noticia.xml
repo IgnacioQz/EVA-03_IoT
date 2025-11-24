@@ -4,31 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@color/white">
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header simple con iconos -->
+        <!-- Header con botones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:elevation="4dp">
 
-            <!-- Botón Volver (flecha izquierda) -->
-            <ImageView
-                android:id="@+id/backButton"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_revert"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
-                android:contentDescription="Volver" />
+            <!-- Botón Volver -->
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_gray_background">
+
+                <ImageView
+                    android:id="@+id/backButton"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:tint="@color/text_dark"
+                    android:contentDescription="Volver" />
+
+            </FrameLayout>
 
             <View
                 android:layout_width="0dp"
@@ -36,94 +44,124 @@
                 android:layout_weight="1" />
 
             <!-- Icono de usuario -->
-            <ImageView
-                android:id="@+id/userButton"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@android:drawable/ic_menu_myplaces"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="4dp"
-                android:contentDescription="Usuario" />
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/circle_primary_background">
+
+                <ImageView
+                    android:id="@+id/userButton"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/ic_menu_myplaces"
+                    app:tint="@color/white"
+                    android:contentDescription="Usuario" />
+
+            </FrameLayout>
 
         </LinearLayout>
 
-        <!-- Contenedor principal con padding -->
+        <!-- Imagen destacada -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <ImageView
+                android:id="@+id/imagenNoticia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:contentDescription="Imagen de la noticia" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Contenido -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp">
 
-            <!-- Título grande -->
+            <!-- Fecha -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/date_badge_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@android:drawable/ic_menu_recent_history"
+                    app:tint="@color/primary" />
+
+                <TextView
+                    android:id="@+id/fechaTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15 Nov 2025"
+                    android:textSize="13sp"
+                    android:textColor="@color/primary"
+                    android:textStyle="bold"
+                    android:layout_marginStart="6dp" />
+
+            </LinearLayout>
+
+            <!-- Título -->
             <TextView
                 android:id="@+id/tituloTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Debate presidencial"
+                android:text="Título de la noticia"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_dark"
                 android:lineSpacingExtra="4dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="12dp" />
 
-            <!-- Bajada (resumen) -->
+            <!-- Bajada -->
             <TextView
                 android:id="@+id/bajadaTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="¿Quién ganó? Expertos analizan qué candidato tuvo el mejor desempeño en el penúltimo 'cara a cara' presidencial"
+                android:text="Resumen de la noticia"
                 android:textSize="16sp"
                 android:textColor="@color/text_light"
                 android:lineSpacingExtra="4dp"
                 android:layout_marginBottom="20dp" />
 
-            <!-- Imagen principal (más grande y destacada) -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+            <!-- Separador -->
+            <View
+                android:layout_width="60dp"
+                android:layout_height="4dp"
+                android:background="@color/accent"
+                android:layout_marginBottom="20dp" />
 
-                <ImageView
-                    android:id="@+id/imagenNoticia"
-                    android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:scaleType="centerCrop"
-                    android:background="@color/gray_light"
-                    android:src="@android:drawable/ic_menu_gallery"
-                    android:contentDescription="Imagen de la noticia" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Cuerpo de la noticia (texto largo) -->
+            <!-- Cuerpo -->
             <TextView
                 android:id="@+id/cuerpoTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Este martes se desarrolló un nuevo debate presidencial donde los cinco candidatos se vieron las caras por penúltima vez en este formato, antes de los comicios del 23 y 24 de noviembre.\n\nLos candidatos que se presentaron fueron José Antonio Kast, del Partido Republicano en Chile (Kast) y el abogado en la casa central de la Pontificia Universidad Católica.\n\nLa instancia constó de cuatro rondas con preguntas cruzadas y directas entre los candidatos. En el primer y tercer bloque, cada uno de los postulantes debió responder dos preguntas que realizaron sus rivales, donde además se les otorgó dos temas, marcado además en la instancia oficial del debate de ANATEL y Archi TV, donde cada político tuvo un minuto para responder y treinta segundos de réplica en contra y réplica a favor del equipo contrario, y siendo que en algunos momentos de cierre hubo un tiempo de un minuto para poder entregar sus principales propuestas."
+                android:text="Contenido completo de la noticia..."
                 android:textSize="16sp"
-                android:textColor="@color/black"
+                android:textColor="@color/text_dark"
                 android:lineSpacingExtra="6dp"
-                android:layout_marginBottom="8dp" />
-
-            <!-- Fecha al final -->
-            <TextView
-                android:id="@+id/fechaTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="15 Nov 2025"
-                android:textSize="13sp"
-                android:textColor="@color/text_light"
-                android:textStyle="italic"
-                android:layout_marginTop="16dp" />
+                android:justificationMode="inter_word" />
 
         </LinearLayout>
-
-        <!-- Espacio al final -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
 
     </LinearLayout>
 

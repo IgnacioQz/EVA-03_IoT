@@ -1,26 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Color principal de la app -->
-    <color name="primary">#01516D</color>
+    <color name="primary">#6B4E9B</color>
+    <color name="primary_dark">#4A3471</color>
+    <color name="primary_light">#9B7BC8</color>
 
-    <!-- Color principal oscuro -->
-    <color name="primary_dark">#007BA7</color>
+    <color name="accent">#E884B4</color>
+    <color name="accent_dark">#D5619A</color>
+    <color name="accent_light">#F5A8CC</color>
 
-    <!-- Color de acento -->
-    <color name="accent">#E41E26</color>
+    <color name="secondary">#7BA8E8</color>
+    <color name="secondary_dark">#5A87C7</color>
+    <color name="secondary_light">#A5C8F5</color>
 
-    <!-- Blanco y Negro-->
+    <!-- Fondos -->
+    <color name="background">#F0F2F8</color>
+    <color name="background_card">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- Fondo secundario -->
-    <color name="gray_light">#BABABA</color>
+    <!-- Grises con tinte morado -->
+    <color name="gray_light">#E8E5F0</color>
+    <color name="gray_medium">#B8B0CC</color>
+    <color name="gray_dark">#6E6B7B</color>
 
-    <!-- Textos  -->
-    <color name="text_dark">#FFFFFF</color>
-    <color name="text_light">#000000</color>
+    <!-- Textos -->
+    <color name="text_dark">#2D2640</color>
+    <color name="text_light">#7D7892</color>
 
-    <!-- Detalles  -->
+    <!-- Estados -->
+    <color name="success">#A5D6A7</color>
+    <color name="error">#EF9A9A</color>
+    <color name="warning">#FFB74D</color>
+    <color name="info">#7BA8E8</color>
+
+    <!-- Colores especiales para gradientes -->
+    <color name="gradient_start">#6B4E9B</color>
+    <color name="gradient_mid">#8B6DB8</color>
+    <color name="gradient_end">#7BA8E8</color>
+
+    <!-- Legacy (mantener compatibilidad) -->
     <color name="metal_silver">#C0C0C0</color>
 </resources>
