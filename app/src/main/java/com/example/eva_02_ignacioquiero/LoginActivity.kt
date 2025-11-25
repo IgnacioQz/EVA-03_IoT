@@ -34,8 +34,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        supportActionBar?.hide()
-
         // Verificar si ya hay un usuario logueado
         checkUserSession()
 

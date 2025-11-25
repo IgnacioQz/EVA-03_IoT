@@ -21,8 +21,6 @@ class RecoverPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recover_password)
 
-        supportActionBar?.hide()
-
         initializeViews()
         setupListeners()
     }
