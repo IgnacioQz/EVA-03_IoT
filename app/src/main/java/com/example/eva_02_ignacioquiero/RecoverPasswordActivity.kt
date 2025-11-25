@@ -21,6 +21,8 @@ class RecoverPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recover_password)
 
+        supportActionBar?.hide()
+
         initializeViews()
         setupListeners()
     }
@@ -52,45 +54,39 @@ class RecoverPasswordActivity : AppCompatActivity() {
                 showAlert("Error", "Por favor ingresa un correo válido")
             }
             else -> {
-                // Verificar si el usuario existe y generar nueva contraseña
-                verifyUserAndResetPassword(email)
+                // Verificar primero si el usuario existe
+                setLoading(true)
+                firebaseHelper.checkUserExists(
+                    email = email,
+                    onExists = { exists ->
+                        android.util.Log.d("RecoverPassword", "Usuario existe: $exists, Email: $email")
+                        if (exists) {
+                            val newPassword = generateRandomPassword()
+                            recoverPassword(email, newPassword)
+                        } else {
+                            setLoading(false)
+                            showAlert("Error", "❌ Usuario no registrado\n\nNo existe una cuenta con:\n$email")
+                        }
+                    },
+                    onFailure = { error ->
+                        setLoading(false)
+                        android.util.Log.e("RecoverPassword", "Error verificando usuario: $error")
+                        showAlert("Error", error)
+                    }
+                )
             }
         }
     }
 
-    private fun verifyUserAndResetPassword(email: String) {
-        // Mostrar loading
+    private fun recoverPassword(email: String, newPassword: String) {
         setLoading(true)
 
-        // Verificar si el usuario existe intentando obtener información
-        firebaseHelper.checkUserExists(
+        firebaseHelper.resetPasswordFree(
             email = email,
-            onExists = { exists ->
-                if (exists) {
-                    // Usuario existe - generar nueva contraseña
-                    val newPassword = generateRandomPassword()
-
-                    // Actualizar la contraseña en Firebase
-                    firebaseHelper.resetPasswordForUser(
-                        email = email,
-                        newPassword = newPassword,
-                        onSuccess = {
-                            setLoading(false)
-                            showPasswordDialog(email, newPassword)
-                        },
-                        onFailure = { errorMessage ->
-                            setLoading(false)
-                            showAlert("Error", errorMessage)
-                        }
-                    )
-                } else {
-                    setLoading(false)
-                    showAlert(
-                        "Error",
-                        "No existe una cuenta registrada con el correo:\n\n$email\n\n" +
-                                "Por favor verifica el correo o regístrate."
-                    )
-                }
+            newPassword = newPassword,
+            onSuccess = {
+                setLoading(false)
+                showPasswordDialog(email, newPassword)
             },
             onFailure = { errorMessage ->
                 setLoading(false)
@@ -101,7 +97,6 @@ class RecoverPasswordActivity : AppCompatActivity() {
 
     /**
      * Genera una contraseña aleatoria de 8 caracteres
-     * Formato: 2 mayúsculas + 4 minúsculas + 2 números
      */
     private fun generateRandomPassword(): String {
         val upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -110,29 +105,17 @@ class RecoverPasswordActivity : AppCompatActivity() {
 
         val password = StringBuilder()
 
-        // 2 mayúsculas
-        repeat(2) {
-            password.append(upperCase[Random.nextInt(upperCase.length)])
-        }
+        repeat(2) { password.append(upperCase[Random.nextInt(upperCase.length)]) }
+        repeat(4) { password.append(lowerCase[Random.nextInt(lowerCase.length)]) }
+        repeat(2) { password.append(numbers[Random.nextInt(numbers.length)]) }
 
-        // 4 minúsculas
-        repeat(4) {
-            password.append(lowerCase[Random.nextInt(lowerCase.length)])
-        }
-
-        // 2 números
-        repeat(2) {
-            password.append(numbers[Random.nextInt(numbers.length)])
-        }
-
-        // Mezclar los caracteres para que no sigan un patrón
         return password.toString().toList().shuffled().joinToString("")
     }
 
     private fun setLoading(loading: Boolean) {
         if (loading) {
             sendButton.isEnabled = false
-            sendButton.text = "Verificando..."
+            sendButton.text = "Procesando..."
             emailEditText.isEnabled = false
         } else {
             sendButton.isEnabled = true
@@ -145,15 +128,16 @@ class RecoverPasswordActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("✅ Contraseña Restablecida")
             .setMessage(
-                "Se ha generado una nueva contraseña para:\n\n" +
+                "Se ha restablecido la contraseña para:\n\n" +
                         "📧 Correo: $email\n\n" +
                         "🔐 Nueva contraseña:\n" +
                         "$newPassword\n\n" +
-                        "⚠️ IMPORTANTE: Guarda esta contraseña en un lugar seguro. " +
-                        "No podrás verla nuevamente."
+                        "⚠️ IMPORTANTE:\n" +
+                        "• Guarda esta contraseña en un lugar seguro\n" +
+                        "• Usa esta contraseña para iniciar sesión\n" +
+                        "• Se recomienda cambiarla después del login"
             )
             .setPositiveButton("Copiar y Cerrar") { dialog, _ ->
-                // Copiar al portapapeles
                 val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
                 val clip = android.content.ClipData.newPlainText("Nueva Contraseña", newPassword)
                 clipboard.setPrimaryClip(clip)
@@ -165,7 +149,7 @@ class RecoverPasswordActivity : AppCompatActivity() {
                 ).show()
 
                 dialog.dismiss()
-                finish() // Volver al login
+                finish()
             }
             .setNegativeButton("Cerrar") { dialog, _ ->
                 dialog.dismiss()
