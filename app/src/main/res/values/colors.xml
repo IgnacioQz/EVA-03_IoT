@@ -14,7 +14,7 @@
     <color name="secondary_light">#A5C8F5</color>
 
     <!-- Fondos -->
-    <color name="background">#F0F2F8</color>
+    <color name="background">#FFFFFF</color>
     <color name="background_card">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
