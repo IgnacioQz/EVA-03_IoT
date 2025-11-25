@@ -1,13 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.EVA02IgnacioQuiero" parent="Theme.Material3.DayNight">
-
+    <style name="Base.Theme.EVA02IgnacioQuiero" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/primary</item>
 
         <item name="android:windowLightStatusBar">false</item>
 
-        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
-        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="Theme.EVA02IgnacioQuiero" parent="Base.Theme.EVA02IgnacioQuiero" />

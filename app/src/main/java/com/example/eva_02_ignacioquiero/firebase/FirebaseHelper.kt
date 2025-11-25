@@ -1,6 +1,7 @@
 package com.example.eva_02_ignacioquiero.firebase
 
 import com.example.eva_02_ignacioquiero.models.Noticia
+import com.example.eva_02_ignacioquiero.models.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,6 +32,22 @@ class FirebaseHelper {
                 authResult.user?.let { user ->
                     onSuccess(user)
                 } ?: onFailure("Error: Usuario nulo")
+            }
+            .addOnFailureListener { exception ->
+                onFailure(getErrorMessage(exception))
+            }
+    }
+
+    fun saveUserData(
+        usuario: Usuario,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        firestore.collection("usuarios")
+            .document(usuario.id)
+            .set(usuario)
+            .addOnSuccessListener {
+                onSuccess()
             }
             .addOnFailureListener { exception ->
                 onFailure(getErrorMessage(exception))
