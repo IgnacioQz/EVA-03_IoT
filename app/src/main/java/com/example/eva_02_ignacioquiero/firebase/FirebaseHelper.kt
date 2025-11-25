@@ -1,6 +1,7 @@
 package com.example.eva_02_ignacioquiero.firebase
 
 import com.example.eva_02_ignacioquiero.models.Noticia
+import com.example.eva_02_ignacioquiero.models.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,6 +15,8 @@ class FirebaseHelper {
 
     // Colección de noticias en Firestore
     private val noticiasCollection = firestore.collection("noticias")
+    private val usuariosCollection = firestore.collection("usuarios")
+    private val recuperacionesCollection = firestore.collection("recuperaciones")
 
     // ==================== AUTHENTICATION ====================
 
@@ -31,6 +34,25 @@ class FirebaseHelper {
                 authResult.user?.let { user ->
                     onSuccess(user)
                 } ?: onFailure("Error: Usuario nulo")
+            }
+            .addOnFailureListener { exception ->
+                onFailure(getErrorMessage(exception))
+            }
+    }
+
+    /**
+     * Guardar datos del usuario en Firestore
+     */
+    fun saveUserData(
+        usuario: Usuario,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        usuariosCollection.document(usuario.id)
+            .set(usuario)
+            .addOnSuccessListener {
+                android.util.Log.d("FirebaseHelper", "Usuario guardado: ${usuario.email}")
+                onSuccess()
             }
             .addOnFailureListener { exception ->
                 onFailure(getErrorMessage(exception))
@@ -58,36 +80,109 @@ class FirebaseHelper {
     }
 
     /**
-     * Recuperar contraseña (método original - no usado actualmente)
-     */
-    fun resetPassword(
-        email: String,
-        onSuccess: () -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-        auth.sendPasswordResetEmail(email)
-            .addOnSuccessListener {
-                onSuccess()
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception.message ?: "Error al enviar correo de recuperación")
-            }
-    }
-
-    /**
-     * Verificar si un usuario existe en Firebase Authentication
+     * Verificar si un usuario existe en Firestore (colección usuarios)
+     * Esta es más confiable que fetchSignInMethodsForEmail en plan free
      */
     fun checkUserExists(
         email: String,
         onExists: (Boolean) -> Unit,
         onFailure: (String) -> Unit
     ) {
-        // Intentar obtener métodos de inicio de sesión para el email
-        auth.fetchSignInMethodsForEmail(email)
-            .addOnSuccessListener { signInMethods ->
-                // Si hay métodos de inicio de sesión, el usuario existe
-                val exists = !signInMethods.signInMethods.isNullOrEmpty()
+        android.util.Log.d("FirebaseHelper", "Verificando si existe en Firestore: $email")
+
+        // Buscar en la colección "usuarios" por email
+        usuariosCollection
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val exists = !querySnapshot.isEmpty
+                android.util.Log.d("FirebaseHelper", "✓ Email encontrado en Firestore: $exists")
                 onExists(exists)
+            }
+            .addOnFailureListener { exception ->
+                android.util.Log.e("FirebaseHelper", "Error verificando usuario: ${exception.message}")
+                onFailure(getErrorMessage(exception))
+            }
+    }
+
+    /**
+     * Recuperar contraseña sin Cloud Functions (Plan Free)
+     * Solo valida que el email existe y genera una contraseña temporal
+     */
+    fun resetPasswordFree(
+        email: String,
+        newPassword: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        // Paso 1: Verificar si el usuario existe
+        checkUserExists(
+            email = email,
+            onExists = { exists ->
+                if (exists) {
+                    // Paso 2: Guardar la contraseña temporal en Firestore
+                    saveTemporaryPassword(email, newPassword, onSuccess, onFailure)
+                } else {
+                    onFailure("❌ Usuario no registrado\n\nNo existe una cuenta con este correo electrónico.\n\n¿Deseas registrarte?")
+                }
+            },
+            onFailure = { error ->
+                onFailure(error)
+            }
+        )
+    }
+
+    /**
+     * Guardar contraseña temporal en Firestore en la colección "recuperaciones"
+     * El usuario usará esta contraseña para iniciar sesión
+     */
+    private fun saveTemporaryPassword(
+        email: String,
+        newPassword: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val recoveryData = hashMapOf(
+            "email" to email,
+            "temporaryPassword" to newPassword,
+            "timestamp" to System.currentTimeMillis(),
+            "used" to false
+        )
+
+        // Guardar con un ID basado en el email
+        val recoveryId = email.replace("@", "_").replace(".", "_")
+
+        recuperacionesCollection.document(recoveryId)
+            .set(recoveryData)
+            .addOnSuccessListener {
+                android.util.Log.d("FirebaseHelper", "Contraseña temporal guardada")
+                onSuccess()
+            }
+            .addOnFailureListener { exception ->
+                android.util.Log.e("FirebaseHelper", "Error guardando contraseña temporal", exception)
+                onFailure("❌ Error al procesar la solicitud: ${exception.message}")
+            }
+    }
+
+    /**
+     * Obtener la contraseña temporal guardada
+     */
+    fun getTemporaryPassword(
+        email: String,
+        onSuccess: (String?) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val recoveryId = email.replace("@", "_").replace(".", "_")
+
+        recuperacionesCollection.document(recoveryId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val tempPassword = document.getString("temporaryPassword")
+                    onSuccess(tempPassword)
+                } else {
+                    onSuccess(null)
+                }
             }
             .addOnFailureListener { exception ->
                 onFailure(getErrorMessage(exception))
@@ -95,21 +190,18 @@ class FirebaseHelper {
     }
 
     /**
-     * Restablecer contraseña para un usuario existente
-     * NOTA: Este método requiere que el usuario inicie sesión nuevamente
+     * Marcar la contraseña temporal como usada
      */
-    fun resetPasswordForUser(
+    fun markPasswordAsUsed(
         email: String,
-        newPassword: String,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
-        // Enviar correo de restablecimiento de contraseña de Firebase
-        auth.sendPasswordResetEmail(email)
+        val recoveryId = email.replace("@", "_").replace(".", "_")
+
+        recuperacionesCollection.document(recoveryId)
+            .update("used", true)
             .addOnSuccessListener {
-                // El correo se envió correctamente
-                // Nota: En un entorno real, el usuario recibiría el correo
-                // Para esta implementación, asumimos que funciona
                 onSuccess()
             }
             .addOnFailureListener { exception ->
@@ -163,7 +255,7 @@ class FirebaseHelper {
     }
 
     /**
-     * Obtener todas las noticias (se ordenarán manualmente en MainActivity)
+     * Obtener todas las noticias
      */
     fun getNoticias(
         onSuccess: (List<Noticia>) -> Unit,

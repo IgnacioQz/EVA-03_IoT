@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("com.google.firebase:firebase-functions")
 
     implementation("io.coil-kt:coil:2.5.0")
 

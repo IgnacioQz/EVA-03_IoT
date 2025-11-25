@@ -27,8 +27,6 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        supportActionBar?.hide()
-
         initializeViews()
         setupListeners()
     }
@@ -97,12 +95,25 @@ class RegisterActivity : AppCompatActivity() {
             email = email,
             password = password,
             onSuccess = { user ->
-                setLoading(false)
+                val usuario = com.example.eva_02_ignacioquiero.models.Usuario(
+                    id = user.uid,
+                    nombre = name,
+                    email = email
+                )
 
-                // Registro exitoso
-                showSuccessDialog(
-                    "¡Cuenta creada exitosamente!",
-                    "Bienvenido $name\n\nTu cuenta ha sido creada con el correo:\n$email"
+                firebaseHelper.saveUserData(
+                    usuario = usuario,
+                    onSuccess = {
+                        setLoading(false)
+                        showSuccessDialog(
+                            "¡Cuenta creada exitosamente!",
+                            "Bienvenido $name\n\nTu cuenta ha sido creada con el correo:\n$email"
+                        )
+                    },
+                    onFailure = { errorMessage ->
+                        setLoading(false)
+                        showAlert("Error al guardar datos", errorMessage)
+                    }
                 )
             },
             onFailure = { errorMessage ->

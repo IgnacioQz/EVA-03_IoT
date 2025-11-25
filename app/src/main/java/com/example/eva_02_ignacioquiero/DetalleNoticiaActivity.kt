@@ -24,8 +24,6 @@ class DetalleNoticiaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_noticia)
 
-        supportActionBar?.hide()
-
         initializeViews()
         setupListeners()
         loadNoticiaData()

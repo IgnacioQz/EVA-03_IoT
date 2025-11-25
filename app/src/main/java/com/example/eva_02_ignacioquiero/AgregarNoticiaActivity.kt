@@ -30,8 +30,6 @@ class AgregarNoticiaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_agregar_noticia)
 
-        supportActionBar?.hide()
-
         initializeViews()
         setupListeners()
 
