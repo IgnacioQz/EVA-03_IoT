@@ -14,15 +14,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eva_02_ignacioquiero.adapters.NoticiasAdapter
 import com.example.eva_02_ignacioquiero.firebase.FirebaseHelper
 import com.example.eva_02_ignacioquiero.models.Noticia
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var addNoticiaCard: com.google.android.material.card.MaterialCardView
+    private lateinit var addNoticiaCard: MaterialCardView
     private lateinit var userIconImageView: ImageView
     private lateinit var emptyTextView: TextView
     private lateinit var adapter: NoticiasAdapter
+    private lateinit var sensoresButton: MaterialCardView
 
     private val firebaseHelper = FirebaseHelper()
     private var noticiasList = mutableListOf<Noticia>()
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.noticiasRecyclerView)
         addNoticiaCard = findViewById(R.id.addNoticiaCard)
         userIconImageView = findViewById(R.id.userIconImageView)
+        sensoresButton = findViewById(R.id.sensoresCard)
 
         // Crear TextView para estado vacío si no existe en el layout
         emptyTextView = TextView(this).apply {
@@ -96,6 +99,11 @@ class MainActivity : AppCompatActivity() {
 
         userIconImageView.setOnClickListener {
             showLogoutDialog()
+        }
+
+        sensoresButton.setOnClickListener {
+            val intent = Intent(this, SensoresActivity::class.java)
+            startActivity(intent)
         }
     }
 

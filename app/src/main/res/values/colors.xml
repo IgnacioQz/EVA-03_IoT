@@ -29,9 +29,16 @@
     <color name="text_light">#7D7892</color>
 
     <!-- Estados -->
-    <color name="success">#A5D6A7</color>
-    <color name="error">#EF9A9A</color>
-    <color name="warning">#FFB74D</color>
+    <!-- Colores adicionales para sensores -->
+    <color name="success_light">#E8F5E9</color>
+    <color name="success">#4CAF50</color>
+
+    <color name="error_light">#FFEBEE</color>
+    <color name="error">#F44336</color>
+
+    <color name="warning_light">#FFF3E0</color>
+    <color name="warning">#FF9800</color>
+
     <color name="info">#7BA8E8</color>
 
     <!-- Colores especiales para gradientes -->
@@ -41,4 +48,5 @@
 
     <!-- Legacy (mantener compatibilidad) -->
     <color name="metal_silver">#C0C0C0</color>
+
 </resources>
